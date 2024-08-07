@@ -1,3 +1,5 @@
+import Footer from "@/app/_components/Footer";
+import PhoneItem from "@/app/_components/Phone-tem";
 import ServiceItem from "@/app/_components/ServiceItem";
 import { Button } from "@/app/_components/ui/button";
 import { Card, CardContent } from "@/app/_components/ui/card";
@@ -60,7 +62,7 @@ const BarbashopPage = async ({ params }: BarbershopPageProps) => {
         </div>
         <div className="flex items-center gap-1">
           <StarIcon className="fill-primary text-primary" size={18} />
-          <p className="text-sm">{barbershop?.address}</p>
+          <p className="text-sm">5.0 (307 Avaliações)</p>
         </div>
       </div>
       <div className="space-y-3 border-b border-solid p-5">
@@ -71,6 +73,11 @@ const BarbashopPage = async ({ params }: BarbershopPageProps) => {
         <h2 className="text-xs font-bold uppercase text-gray-400">Serviços</h2>
         {barbershop.services.map((service) => (
           <ServiceItem key={service.id} service={service} />
+        ))}
+      </div>
+      <div className="space-y-3 p-5">
+        {barbershop.phones.map((phone) => (
+          <PhoneItem key={phone} phone={phone} />
         ))}
       </div>
     </div>
