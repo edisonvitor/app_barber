@@ -1,3 +1,4 @@
+import HamburgerMenu from "@/app/_components/Hamburger-menu";
 import PhoneItem from "@/app/_components/Phone-tem";
 import ServiceItem from "@/app/_components/ServiceItem";
 import { Button } from "@/app/_components/ui/button";
@@ -44,13 +45,9 @@ const BarbashopPage = async ({ params }: BarbershopPageProps) => {
             <ChevronLeftIcon />
           </Link>
         </Button>
-        <Button
-          size="icon"
-          variant="secondary"
-          className="absolute right-4 top-4"
-        >
-          <MenuIcon />
-        </Button>
+        <div className="absolute right-4 top-4">
+          <HamburgerMenu />
+        </div>
       </div>
       <div className="border-b border-solid p-5">
         <h1 className="mb-3 text-xl font-bold">{barbershop?.name}</h1>
