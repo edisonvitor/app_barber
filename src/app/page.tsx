@@ -7,7 +7,6 @@ import { db } from "./_lib/prisma";
 import BarberShopItem from "./_components/barber-shop-item";
 import quickSearchOptions from "./_constance/search";
 import BulkingItem from "./_components/Bulking-tem";
-import Footer from "./_components/Footer";
 
 export default async function Home() {
   const barbershops = await db.barbershop.findMany({});

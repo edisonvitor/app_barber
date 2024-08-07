@@ -1,8 +1,6 @@
-import Footer from "@/app/_components/Footer";
 import PhoneItem from "@/app/_components/Phone-tem";
 import ServiceItem from "@/app/_components/ServiceItem";
 import { Button } from "@/app/_components/ui/button";
-import { Card, CardContent } from "@/app/_components/ui/card";
 import { db } from "@/app/_lib/prisma";
 import { ChevronLeftIcon, MapPinIcon, MenuIcon, StarIcon } from "lucide-react";
 import Image from "next/image";
