@@ -7,6 +7,8 @@ import { db } from "./_lib/prisma";
 import BarberShopItem from "./_components/barber-shop-item";
 import quickSearchOptions from "./_constance/search";
 import BulkingItem from "./_components/Bulking-tem";
+import { useUser } from "./_contexts/UserContext";
+import NameTitle from "./_components/NameTitle";
 
 export default async function Home() {
   const barbershops = await db.barbershop.findMany({});
@@ -21,8 +23,7 @@ export default async function Home() {
       <Header />
       <div className="p-6">
         <div>
-          <h2 className="text-xl font-bold">Ola, Miguel!</h2>
-          <p>Terça, 6 de Agosto</p>
+          <NameTitle />
           <div className="mt-6 flex items-center gap-2">
             <Input placeholder="Buscar..." />
             <Button>
