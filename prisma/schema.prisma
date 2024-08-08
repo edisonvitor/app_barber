@@ -14,46 +14,90 @@ datasource db {
 }
 
 model User {
-  id          String   @id @default(uuid())
-  name        String
-  email       String  @unique
-  bookings    Booking[]
-  created_at  DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  bookings      Booking[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
 }
 
 model Barbershop {
-  id          String   @id @default(uuid())
+  id          String               @id @default(uuid())
   name        String
   address     String
   phones      String[]
   image_url   String
   description String
   services    Barbershop_service[]
-  created_at  DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  created_at  DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
 }
 
 model Barbershop_service {
-  id                String @id @default(uuid())
-  name              String
-  description       String
-  price             Decimal @db.Decimal(10, 2)
-  barbershop_id     String
-  barbershop        Barbershop @relation(fields: [barbershop_id], references: [id])
-  image_url         String
-  bookings          Booking[]
-  created_at        DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id            String     @id @default(uuid())
+  name          String
+  description   String
+  price         Decimal    @db.Decimal(10, 2)
+  barbershop_id String
+  barbershop    Barbershop @relation(fields: [barbershop_id], references: [id])
+  image_url     String
+  bookings      Booking[]
+  created_at    DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
 }
 
 model Booking {
-  id                String   @id @default(uuid())
-  user_id           String
-  user              User @relation(fields: [user_id], references: [id])
-  service_id        String
-  service           Barbershop_service @relation(fields: [service_id], references: [id])
-  date              DateTime
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id         String             @id @default(uuid())
+  user_id    String
+  user       User               @relation(fields: [user_id], references: [id])
+  service_id String
+  service    Barbershop_service @relation(fields: [service_id], references: [id])
+  date       DateTime
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
 }
