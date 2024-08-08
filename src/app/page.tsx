@@ -7,6 +7,7 @@ import quickSearchOptions from "./_constance/search";
 import BulkingItem from "./_components/Bulking-tem";
 import NameTitle from "./_components/NameTitle";
 import SearchItem from "./_components/SearchItem";
+import Link from "next/link";
 
 export default async function Home() {
   const barbershops = await db.barbershop.findMany({});
@@ -27,14 +28,21 @@ export default async function Home() {
           </div>
           <div className="mt-6 flex gap-3 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
             {quickSearchOptions.map((option) => (
-              <Button key={option.title} className="gap-2" variant="secondary">
-                <Image
-                  alt={option.title}
-                  src={option.imageUrl}
-                  width={16}
-                  height={16}
-                />
-                {option.title}
+              <Button
+                key={option.title}
+                className="gap-2"
+                variant="secondary"
+                asChild
+              >
+                <Link href={`/barbershop?search=${option.title}`}>
+                  <Image
+                    alt={option.title}
+                    src={option.imageUrl}
+                    width={16}
+                    height={16}
+                  />
+                  {option.title}
+                </Link>
               </Button>
             ))}
           </div>
