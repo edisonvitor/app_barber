@@ -1,14 +1,12 @@
 import Image from "next/image";
 import Header from "./_components/Header";
-import { Input } from "./_components/ui/input";
 import { Button } from "./_components/ui/button";
-import { SearchIcon } from "lucide-react";
 import { db } from "./_lib/prisma";
 import BarberShopItem from "./_components/barber-shop-item";
 import quickSearchOptions from "./_constance/search";
 import BulkingItem from "./_components/Bulking-tem";
-import { useUser } from "./_contexts/UserContext";
 import NameTitle from "./_components/NameTitle";
+import SearchItem from "./_components/SearchItem";
 
 export default async function Home() {
   const barbershops = await db.barbershop.findMany({});
@@ -24,11 +22,8 @@ export default async function Home() {
       <div className="p-6">
         <div>
           <NameTitle />
-          <div className="mt-6 flex items-center gap-2">
-            <Input placeholder="Buscar..." />
-            <Button>
-              <SearchIcon />
-            </Button>
+          <div className="mt-6">
+            <SearchItem />
           </div>
           <div className="mt-6 flex gap-3 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
             {quickSearchOptions.map((option) => (
