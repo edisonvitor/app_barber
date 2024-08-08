@@ -1,3 +1,5 @@
+"use client";
+
 import {
   CalendarIcon,
   HomeIcon,
@@ -26,8 +28,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 const HamburgerMenu = () => {
+  const { data } = useSession();
+  const handleLoginGoogleClick = () => signIn("google");
+  const handleSingOut = () => signOut();
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -40,38 +47,49 @@ const HamburgerMenu = () => {
           <SheetTitle className="text-left">Menu</SheetTitle>
         </SheetHeader>
         <div className="flex items-center justify-between gap-3 border-b border-solid py-5">
-          <h2 className="font-bold">Ola, faça seu login!</h2>
-          <Dialog>
-            <DialogTrigger>
-              <Button size="icon">
-                <LogInIcon />
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="w-[80%]">
-              <DialogHeader>
-                <DialogTitle>Faça login na plataforma</DialogTitle>
-                <DialogDescription>
-                  Conecte-se usando sua conta do Google
-                </DialogDescription>
-              </DialogHeader>
-              <Button variant="outline" className="gap-1 font-bold">
-                <Image
-                  src="/Google.svg"
-                  alt="fazer login com o google"
-                  width={18}
-                  height={18}
-                />
-                Google
-              </Button>
-            </DialogContent>
-          </Dialog>
-          {/* <Avatar>
-            <AvatarImage src="https://plus.unsplash.com/premium_photo-1664536392779-049ba8fde933?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGF2YXRhcnxlbnwwfHwwfHx8MA%3D%3D" />
-          </Avatar>
-          <div>
-            <p className="font-bold">Guilherme Rocha</p>
-            <p className="text-sm">guilherme@exemplo.com</p>
-          </div> */}
+          {!data?.user ? (
+            <>
+              <h2 className="font-bold">Ola, faça seu login!</h2>
+              <Dialog>
+                <DialogTrigger>
+                  <Button size="icon">
+                    <LogInIcon />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="w-[80%]">
+                  <DialogHeader>
+                    <DialogTitle>Faça login na plataforma</DialogTitle>
+                    <DialogDescription>
+                      Conecte-se usando sua conta do Google
+                    </DialogDescription>
+                  </DialogHeader>
+                  <Button
+                    variant="outline"
+                    className="gap-1 font-bold"
+                    onClick={handleLoginGoogleClick}
+                  >
+                    <Image
+                      src="/Google.svg"
+                      alt="fazer login com o google"
+                      width={18}
+                      height={18}
+                    />
+                    Google
+                  </Button>
+                </DialogContent>
+              </Dialog>
+            </>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Avatar>
+                <AvatarImage src={data?.user?.image || ""} />
+              </Avatar>
+              <div>
+                <p className="font-bold">{data?.user?.name}</p>
+                <p className="text-sm">{data?.user?.email}</p>
+              </div>
+            </div>
+          )}
         </div>
         <div className="flex flex-col gap-2 border-b border-solid py-5">
           <SheetClose asChild>
@@ -105,7 +123,11 @@ const HamburgerMenu = () => {
           ))}
         </div>
         <div className="flex flex-col gap-3 border-b border-solid py-5">
-          <Button variant="ghost" className="justify-start gap-2">
+          <Button
+            variant="ghost"
+            className="justify-start gap-2"
+            onClick={handleSingOut}
+          >
             <LogOutIcon size={18} />
             Sair da Conta
           </Button>
