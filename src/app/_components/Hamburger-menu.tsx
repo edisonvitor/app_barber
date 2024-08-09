@@ -1,5 +1,4 @@
 "use client";
-
 import {
   CalendarIcon,
   HomeIcon,
@@ -20,19 +19,11 @@ import { Avatar, AvatarImage } from "./ui/avatar";
 import Link from "next/link";
 import quickSearchOptions from "../_constance/search";
 import Image from "next/image";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "./ui/dialog";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import LoginDialogGoogle from "./LoginDialogGoogle";
 
 const HamburgerMenu = () => {
   const { data } = useSession();
-  const handleLoginGoogleClick = () => signIn("google");
   const handleSingOut = () => signOut();
 
   return (
@@ -50,34 +41,13 @@ const HamburgerMenu = () => {
           {!data?.user ? (
             <>
               <h2 className="font-bold">Ola, faça seu login!</h2>
-              <Dialog>
-                <DialogTrigger>
+              <LoginDialogGoogle
+                triggerContent={
                   <Button size="icon">
                     <LogInIcon />
                   </Button>
-                </DialogTrigger>
-                <DialogContent className="w-[80%]">
-                  <DialogHeader>
-                    <DialogTitle>Faça login na plataforma</DialogTitle>
-                    <DialogDescription>
-                      Conecte-se usando sua conta do Google
-                    </DialogDescription>
-                  </DialogHeader>
-                  <Button
-                    variant="outline"
-                    className="gap-1 font-bold"
-                    onClick={handleLoginGoogleClick}
-                  >
-                    <Image
-                      src="/Google.svg"
-                      alt="fazer login com o google"
-                      width={18}
-                      height={18}
-                    />
-                    Google
-                  </Button>
-                </DialogContent>
-              </Dialog>
+                }
+              />
             </>
           ) : (
             <div className="flex items-center gap-2">
@@ -107,22 +77,21 @@ const HamburgerMenu = () => {
         </div>
         <div className="flex flex-col gap-2 border-b border-solid py-5">
           {quickSearchOptions.map((option) => (
-            <Button
-              key={option.title}
-              className="justify-start gap-2"
-              variant="ghost"
-              asChild
-            >
-              <Link href={`/barbershop?search=${option.title}`}>
-                <Image
-                  alt={option.title}
-                  src={option.imageUrl}
-                  height={18}
-                  width={18}
-                />
-                {option.title}
-              </Link>
-            </Button>
+            <SheetClose asChild key={option.title}>
+              <SheetClose asChild>
+                <Button className="justify-start gap-2" variant="ghost" asChild>
+                  <Link href={`/barbershop?search=${option.title}`}>
+                    <Image
+                      alt={option.title}
+                      src={option.imageUrl}
+                      height={18}
+                      width={18}
+                    />
+                    {option.title}
+                  </Link>
+                </Button>
+              </SheetClose>
+            </SheetClose>
           ))}
         </div>
         <div className="flex flex-col gap-3 border-b border-solid py-5">
