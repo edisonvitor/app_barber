@@ -19,7 +19,10 @@ interface LoginDialogGoogleProps {
 const LoginDialogGoogle: React.FC<LoginDialogGoogleProps> = ({
   triggerContent,
 }) => {
-  const handleLoginGoogleClick = () => signIn("google");
+  const handleLoginGoogleClick = () => {
+    const callbackUrl = window.location.href;
+    signIn("google", { callbackUrl });
+  };
   return (
     <>
       <Dialog>
