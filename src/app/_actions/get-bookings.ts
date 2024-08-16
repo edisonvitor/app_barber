@@ -42,5 +42,6 @@ export const getAllBookings = async ({ userId, status }: GetBookingsProps) => {
       },
     },
     // se status = confirmado ordena por data ascendente, senão descendente
+    orderBy: status === "confirmado" ? [{ date: "asc" }] : [{ date: "desc" }],
   });
 };
