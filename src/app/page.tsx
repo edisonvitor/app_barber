@@ -8,20 +8,30 @@ import BulkingItem from "./_components/Bulking-tem";
 import NameTitle from "./_components/NameTitle";
 import SearchItem from "./_components/SearchItem";
 import Link from "next/link";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./_lib/auth";
+import { getAllBookings } from "./_actions/get-bookings";
 
 export default async function Home() {
+  const session = await getServerSession(authOptions);
   const barbershops = await db.barbershop.findMany({});
   const popularBarbershops = await db.barbershop.findMany({
     orderBy: {
       name: "desc",
     },
   });
+  const bookings = session?.user
+    ? await getAllBookings({
+        userId: (session.user as any).id,
+        status: "confirmado",
+      })
+    : [];
 
   return (
     <div>
       <Header />
       <div className="p-6">
-        <div>
+        <div className="mb-3">
           <NameTitle />
           <div className="mt-6">
             <SearchItem />
@@ -55,9 +65,18 @@ export default async function Home() {
             />
           </div>
         </div>
-        <BulkingItem />
+        {bookings.length > 0 && (
+          <h2 className="mb-3 mt-6 text-xs font-bold uppercase text-gray-400">
+            agendamentos
+          </h2>
+        )}
+        <div className="flex gap-3 overflow-x-auto [&::-webkit-scrollbar]:hidden">
+          {bookings.map((booking) => (
+            <BulkingItem key={booking.id} booking={booking} />
+          ))}
+        </div>
         <h2 className="mb-3 mt-6 text-xs font-bold uppercase text-gray-400">
-          agendamentos
+          barbearias
         </h2>
         <div className="flex gap-4 overflow-auto [&::-webkit-scrollbar]:hidden">
           {barbershops.map((barbershop) => (
