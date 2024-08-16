@@ -33,7 +33,7 @@ const HamburgerMenu = () => {
           <MenuIcon />
         </Button>
       </SheetTrigger>
-      <SheetContent className="overflow-y-auto">
+      <SheetContent className="overflow-y-auto [&::-webkit-scrollbar]:hidden">
         <SheetHeader>
           <SheetTitle className="text-left">Menu</SheetTitle>
         </SheetHeader>
