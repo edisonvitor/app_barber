@@ -14,65 +14,38 @@ import {
 import { Calendar } from "./ui/calendar";
 import { useEffect, useMemo, useState } from "react";
 import { ptBR } from "date-fns/locale";
-import { addDays, format, isPast, isToday, set } from "date-fns";
+import { isPast, isToday, set } from "date-fns";
 import { createBooking } from "../_actions/create-booking";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import LoginDialogGoogle from "./LoginDialogGoogle";
-import { LogIn } from "lucide-react";
 import { getBookings } from "../_actions/get-bookings";
-import { error } from "console";
+import BookingSummary from "./Booking-summary";
+import { timeList } from "../_constance/time-list";
 
 interface ServiceItemProps {
   service: Barbershop_service;
   barbershop: Pick<Barbershop, "name">;
 }
 
-//pega os agendamentos no db
-
-const TIME_LIST = [
-  "08:00",
-  "08:30",
-  "09:00",
-  "09:30",
-  "10:00",
-  "10:30",
-  "11:00",
-  "11:30",
-  "12:00",
-  "12:30",
-  "13:00",
-  "13:30",
-  "14:00",
-  "14:30",
-  "15:00",
-  "15:30",
-  "16:00",
-  "16:30",
-  "17:00",
-  "17:30",
-];
-
 interface getTimeListProps {
   bookings: Booking[];
   selectedDay: Date;
 }
+const TIME_LIST = timeList;
 
 const getTimeList = ({ bookings, selectedDay }: getTimeListProps) => {
   return TIME_LIST.filter((time) => {
     const [hour, minutes] = time.split(":").map(Number);
-
     const timeIsOnThePast = isPast(set(new Date(), { hours: hour, minutes }));
     if (timeIsOnThePast && isToday(selectedDay)) {
       return false;
     }
-
     const hasBookingOnCurrentTime = bookings.some(
       (booking) =>
         booking.date.getHours() === hour &&
         booking.date.getMinutes() === minutes,
     );
-
     if (hasBookingOnCurrentTime) {
       return false;
     }
@@ -82,26 +55,15 @@ const getTimeList = ({ bookings, selectedDay }: getTimeListProps) => {
 
 const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
   const { data } = useSession();
-  const [date, setDate] = useState<Date | undefined>(undefined);
   const [selectedDay, setSelectedDay] = useState<Date | undefined>(undefined);
   const [selectedTime, setSelectedTime] = useState<string | undefined>(
     undefined,
   );
-  const handleDate = (): Date | undefined => {
-    if (!selectedDay || !selectedTime) return;
-    const [hour, minute] = selectedTime.split(":").map(Number);
-    return set(selectedDay, {
-      minutes: minute,
-      hours: hour,
-    });
-  };
-
   const handleBookingSheet = () => {
     setSelectedDay(undefined);
     setSelectedTime(undefined);
     setDayBookings([]);
   };
-
   const [dayBookings, setDayBookings] = useState<Booking[]>([]);
   useEffect(() => {
     const fetchBookings = async () => {
@@ -114,19 +76,23 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
     };
     fetchBookings();
   }, [selectedDay, service.id, setDayBookings]);
-
+  const selectedDate = useMemo(() => {
+    if (!selectedDay || !selectedTime) return;
+    return set(selectedDay, {
+      hours: Number(selectedTime?.split(":")[0]),
+      minutes: Number(selectedTime?.split(":")[1]),
+    });
+  }, [selectedTime, selectedDay]);
   const handleCreateBooking = async () => {
     try {
-      const newDate = handleDate();
-      if (!newDate) {
+      if (!selectedDate) {
         toast.error("Por favor, escolha um horário válido");
         return;
       }
-
       await createBooking({
         service_id: service.id,
         user_id: (data?.user as any).id,
-        date: newDate,
+        date: selectedDate,
       });
       toast.success("Reserva realizada com sucesso!");
     } catch (error) {
@@ -134,12 +100,10 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
       toast.error("Error ao criar Reserva");
     }
   };
-
   const timeList = useMemo(() => {
     if (!selectedDay) return [];
     return getTimeList({ bookings: dayBookings, selectedDay });
   }, [dayBookings, selectedDay]);
-
   return (
     <Card>
       <CardContent className="flex items-center gap-2 p-2">
@@ -228,37 +192,13 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
                     )}
                   </div>
                 )}
-                {selectedDay && selectedTime && (
+                {selectedDate && (
                   <div className="p-5">
-                    <Card>
-                      <CardContent className="space-y-3 p-3">
-                        <div className="flex items-center justify-between">
-                          <h2 className="font-bold">{service.name}</h2>
-                          <p className="text-sm font-bold">
-                            {Intl.NumberFormat("pt-BR", {
-                              style: "currency",
-                              currency: "BRL",
-                            }).format(Number(service.price))}
-                          </p>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <h2 className="font-bold text-gray-400">Data</h2>
-                          <p className="text-sm">
-                            {format(selectedDay, "d 'de' MMMM", {
-                              locale: ptBR,
-                            })}
-                          </p>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <h2 className="font-bold text-gray-400">Horário</h2>
-                          <p className="text-sm">{selectedTime}</p>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <h2 className="font-bold text-gray-400">Barbearia</h2>
-                          <p className="text-sm">{barbershop.name}</p>
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <BookingSummary
+                      barbershop={barbershop}
+                      service={service}
+                      selectedDay={selectedDate}
+                    />
                   </div>
                 )}
                 <SheetFooter className="mx-5 mt-5">
