@@ -8,7 +8,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form";
 import { useForm } from "react-hook-form";
-import { UseFormReturn } from "react-hook-form/dist";
 
 const SearchItem = () => {
   // Get router instance for navigation purposes
