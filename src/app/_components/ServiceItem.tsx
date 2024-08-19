@@ -15,13 +15,12 @@ import { Calendar } from "./ui/calendar";
 import { useEffect, useMemo, useState } from "react";
 import { ptBR } from "date-fns/locale";
 import { isPast, isToday, set } from "date-fns";
-import { createBooking } from "../_actions/create-booking";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import LoginDialogGoogle from "./LoginDialogGoogle";
-import { getBookings } from "../_actions/get-bookings";
 import BookingSummary from "./Booking-summary";
 import { timeList } from "../_constance/time-list";
+import { createBooking, getBookings } from "../_actions/bookings";
 
 interface ServiceItemProps {
   service: Barbershop_service;
@@ -71,6 +70,8 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
       const bookings = await getBookings({
         date: selectedDay,
         serviceId: service.id,
+        userId: "",
+        status: "",
       });
       setDayBookings(bookings);
     };
@@ -90,8 +91,8 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
         return;
       }
       await createBooking({
-        service_id: service.id,
-        user_id: (data?.user as any).id,
+        serviceId: service.id,
+        userId: (data?.user as any).id,
         date: selectedDate,
       });
       toast.success("Reserva realizada com sucesso!");

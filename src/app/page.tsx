@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Header from "./_components/Header";
 import { Button } from "./_components/ui/button";
-import { db } from "./_lib/prisma";
 import BarberShopItem from "./_components/barber-shop-item";
 import quickSearchOptions from "./_constance/search";
 import BulkingItem from "./_components/Bulking-tem";
@@ -10,20 +9,19 @@ import SearchItem from "./_components/SearchItem";
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./_lib/auth";
-import { getAllBookings } from "./_actions/get-bookings";
+import { getBarbershops, getPopularBarbershops } from "./_actions/barbershops";
+import { getBookingsByStatus } from "./_actions/bookings";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
-  const barbershops = await db.barbershop.findMany({});
-  const popularBarbershops = await db.barbershop.findMany({
-    orderBy: {
-      name: "desc",
-    },
-  });
+  const barbershops = await getBarbershops();
+  const popularBarbershops = await getPopularBarbershops();
   const bookings = session?.user
-    ? await getAllBookings({
+    ? await getBookingsByStatus({
         userId: (session.user as any).id,
         status: "confirmado",
+        date: undefined,
+        serviceId: "",
       })
     : [];
 

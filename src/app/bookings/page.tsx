@@ -1,9 +1,9 @@
 import { getServerSession } from "next-auth";
 import Header from "../_components/Header";
 import { authOptions } from "../_lib/auth";
-import { getAllBookings } from "../_actions/get-bookings";
 import BulkingItem from "../_components/Bulking-tem";
 import { db } from "../_lib/prisma";
+import { getBookingsByStatus } from "../_actions/bookings";
 
 const Bookings = async () => {
   const session = await getServerSession(authOptions);
@@ -11,13 +11,15 @@ const Bookings = async () => {
   if (!session?.user) {
     return <p>Você não está logado!</p>;
   }
-  const bookingsConfirmados = await getAllBookings({
+  const bookingsConfirmados = await getBookingsByStatus({
     userId: (session?.user as any).id,
     status: "confirmado",
+    serviceId: "",
   });
-  const bookingsFinalizados = await getAllBookings({
+  const bookingsFinalizados = await getBookingsByStatus({
     userId: (session?.user as any).id,
     status: "finalizado",
+    serviceId: "",
   });
 
   return (

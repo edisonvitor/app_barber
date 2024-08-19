@@ -17,7 +17,6 @@ import {
 import Image from "next/image";
 import PhoneItem from "./Phone-tem";
 import { Button } from "./ui/button";
-import { deleteBooking } from "../_actions/delete-booking";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import {
@@ -31,6 +30,7 @@ import {
 } from "./ui/dialog";
 import { DialogClose } from "@radix-ui/react-dialog";
 import BookingSummary from "./Booking-summary";
+import { deleteBooking } from "../_actions/bookings";
 
 interface BulkingItemProps {
   booking: Prisma.BookingGetPayload<{
