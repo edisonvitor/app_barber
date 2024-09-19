@@ -1,3 +1,4 @@
+"use server";
 import { Barbershop } from "@prisma/client";
 import { db } from "../_lib/prisma";
 

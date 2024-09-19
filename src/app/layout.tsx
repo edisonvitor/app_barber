@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "FSWBarber",
-  description: "Barbaearias FSW",
+  description: "Barbearias FSW",
 };
 
 export default function RootLayout({
@@ -21,8 +21,16 @@ export default function RootLayout({
     <html lang="pt-br" className="dark">
       <body className={inter.className}>
         <AuthProviders>
+          {/* Layout mobile-first */}
           <div className="flex h-full flex-col">
-            <div className="flex-1">{children}</div>
+            {/* Mobile layout */}
+            <div className="flex-1 p-4 md:hidden">{children}</div>
+
+            {/* Desktop layout */}
+            <div className="hidden md:flex md:flex-1 md:items-center md:justify-center lg:p-10">
+              <div className="w-full lg:w-3/4 xl:w-2/3">{children}</div>
+            </div>
+
             <Footer />
           </div>
         </AuthProviders>
